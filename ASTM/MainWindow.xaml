@@ -1,0 +1,366 @@
+﻿<Window x:Class="ASTM.MainWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:ASTM="clr-namespace:ASTM" Title="Менеджер задач" Height="670" Width="1040" Icon="/ASTM;component/Images/MainIcon.ico"
+		Loaded="Window_Loaded" WindowStartupLocation="CenterScreen" ResizeMode="CanResizeWithGrip" KeyDown="Window_KeyDown" Closed="Window_Closed">
+	<Window.CommandBindings>
+		<CommandBinding Command="ASTM:MainWindow.StartCommand" Executed="StartCommand_Executed" CanExecute="StartCommand_CanExecute" />
+		<CommandBinding Command="ASTM:MainWindow.PauseCommand" Executed="PauseCommand_Executed" CanExecute="PauseCommand_CanExecute" />
+		<CommandBinding Command="ASTM:MainWindow.StopCommand" Executed="StopCommand_Executed" CanExecute="StopCommand_CanExecute" />
+		<CommandBinding Command="ASTM:MainWindow.ResetCommand" Executed="ResetCommand_Executed" />
+		<CommandBinding Command="ASTM:MainWindow.HelpCommand" Executed="HelpCommand_Executed" />
+	</Window.CommandBindings>
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="*" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Menu Height="23">
+			<MenuItem Header="_Файл">
+				<MenuItem Header="_Сохранить диаграмму..." Click="SaveDiagram_Click">
+					<MenuItem.Icon>
+						<Image Source="/ASTM;component/Images/Diagram.png" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<Separator />
+				<MenuItem Header="_Выход" Click="Exit_Click" />
+			</MenuItem>
+			<MenuItem Header="В_ид">
+				<MenuItem Header="_Автопрокрутка графика" IsCheckable="True" IsChecked="{Binding RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type Window}}, Path=AutoScroll}" Name="autoScrollMenuItem" />
+			</MenuItem>
+			<MenuItem Header="Сис_тема">
+				<MenuItem Command="ASTM:MainWindow.StartCommand">
+					<MenuItem.Icon>
+						<Image Source="/ASTM;component/Images/Play.png" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<MenuItem Command="ASTM:MainWindow.PauseCommand">
+					<MenuItem.Icon>
+						<Image Source="/ASTM;component/Images/Pause.png" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<MenuItem Command="ASTM:MainWindow.StopCommand">
+					<MenuItem.Icon>
+						<Image Source="/ASTM;component/Images/Stop.png" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<Separator />
+				<MenuItem Command="ASTM:MainWindow.ResetCommand" />
+			</MenuItem>
+			<MenuItem Header="Сп_равка">
+				<MenuItem Command="ASTM:MainWindow.HelpCommand">
+					<MenuItem.Icon>
+						<Image Stretch="Uniform" Height="16" Width="16" Source="/ASTM;component/Images/Help.png" />
+					</MenuItem.Icon>
+				</MenuItem>
+				<Separator />
+				<MenuItem Header="О про_грамме..." Click="About_Click" />
+			</MenuItem>
+		</Menu>
+		<ToolBarTray Grid.Row="1" Height="26">
+			<ToolBar>
+				<Button Command="ASTM:MainWindow.StartCommand">
+					<StackPanel Orientation="Horizontal">
+						<Image Stretch="None" Source="/ASTM;component/Images/Play.png" />
+						<TextBlock Margin="3,0">Запуск</TextBlock>
+					</StackPanel>
+				</Button>
+				<Button Command="ASTM:MainWindow.PauseCommand">
+					<StackPanel Orientation="Horizontal">
+						<Image Stretch="None" Source="/ASTM;component/Images/Pause.png" />
+						<TextBlock Margin="3,0">Приостановка</TextBlock>
+					</StackPanel>
+				</Button>
+				<Button Command="ASTM:MainWindow.StopCommand">
+					<StackPanel Orientation="Horizontal">
+						<Image Margin="0.5,0,0,0" Stretch="None" Source="/ASTM;component/Images/Stop.png" />
+						<TextBlock Margin="3,0">Остановка</TextBlock>
+					</StackPanel>
+				</Button>
+			</ToolBar>
+			<ToolBar>
+				<Button Command="ASTM:MainWindow.HelpCommand">
+					<StackPanel Orientation="Horizontal">
+						<Image Stretch="UniformToFill" Height="16" Width="16" Source="/ASTM;component/Images/Help.png" />
+						<TextBlock Margin="3,0">Техническое задание</TextBlock>
+					</StackPanel>
+				</Button>
+			</ToolBar>
+		</ToolBarTray>
+		<Grid Grid.Row="2" Margin="10,0,10,10">
+			<Grid.Resources>
+				<Style x:Key="HeaderStyle" TargetType="{x:Type TextBlock}">
+					<Setter Property="HorizontalAlignment" Value="Stretch" />
+					<Setter Property="Margin" Value="1" />
+					<Setter Property="Padding" Value="3,0" />
+					<Setter Property="TextAlignment" Value="Center" />
+					<Setter Property="TextBlock.Background">
+						<Setter.Value>
+							<LinearGradientBrush EndPoint="0.5,1" StartPoint="0.5,0">
+								<GradientStop Color="Transparent" Offset="0" />
+								<GradientStop Color="#404169E1" Offset="1" />
+							</LinearGradientBrush>
+						</Setter.Value>
+					</Setter>
+				</Style>
+				<Style x:Key="TextBoxStyle" TargetType="{x:Type TextBox}">
+					<Setter Property="Margin" Value="1" />
+					<Setter Property="Height" Value="23" />
+					<Setter Property="MinWidth" Value="25" />
+					<Setter Property="MaxLength" Value="3" />
+					<Setter Property="TextAlignment" Value="Right" />
+				</Style>
+			</Grid.Resources>
+			<Grid.RowDefinitions>
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="Auto" />
+				<RowDefinition Height="*" />
+				<RowDefinition Height="Auto" />
+			</Grid.RowDefinitions>
+			<StackPanel Margin="0,3" Orientation="Horizontal">
+				<Image VerticalAlignment="Bottom" Stretch="None" Source="/ASTM;component/Images/Table.png" />
+				<TextBlock Margin="3,0" FontSize="16">Параметры задач:</TextBlock>
+			</StackPanel>
+			<Border Grid.Row="1" BorderBrush="#FF828790" BorderThickness="1">
+				<ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+					<Grid Name="allParametersGrid">
+						<Grid.RowDefinitions>
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+							<RowDefinition Height="Auto" />
+						</Grid.RowDefinitions>
+						<Grid.ColumnDefinitions>
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+							<ColumnDefinition Width="Auto" />
+						</Grid.ColumnDefinitions>
+						<TextBlock Grid.Column="0" Style="{StaticResource HeaderStyle}" ToolTip="Имя задачи">Задача</TextBlock>
+						<TextBlock Grid.Column="1" Style="{StaticResource HeaderStyle}" ToolTip="Цвет, используемый для отображения активности задачи на диаграмме">Цвет</TextBlock>
+						<TextBlock Grid.Column="2" Style="{StaticResource HeaderStyle}" ToolTip="Тип операции, эмулируемый задачей">Операция</TextBlock>
+						<TextBlock Grid.Column="3" Style="{StaticResource HeaderStyle}" ToolTip="Время первого запуска задачи (Начала ее работы в системе)">Тн</TextBlock>
+						<TextBlock Grid.Column="4" Style="{StaticResource HeaderStyle}" ToolTip="Период выполнения задачи">Тп</TextBlock>
+						<TextBlock Grid.Column="5" Style="{StaticResource HeaderStyle}" ToolTip="Допустимая по времени задержка (время ожидания задачей получения управления)">Тз</TextBlock>
+						<TextBlock Grid.Column="6" Style="{StaticResource HeaderStyle}" ToolTip="Максимально допустимое время работы задачи">Ткр</TextBlock>
+						<TextBlock Grid.Column="7" Style="{StaticResource HeaderStyle}" ToolTip="Приоритет задачи (меньшее значение представляет больший приоритет)">Пр</TextBlock>
+						<TextBlock Grid.Column="8" Style="{StaticResource HeaderStyle}" ToolTip="Время сеанса (время, в течение которого задача выполняет свои функции)">Тс</TextBlock>
+						<TextBlock Grid.Column="9" Style="{StaticResource HeaderStyle}" ToolTip="Время жизни задачи на протяжении всего моделирования (время прекращения ее работы в системе)">Тк</TextBlock>
+						<TextBlock Grid.Column="10" Style="{StaticResource HeaderStyle}" ToolTip="Приостановка работы задачи">Приост.</TextBlock>
+						<TextBlock Grid.Column="11" Style="{StaticResource HeaderStyle}" ToolTip="Возобновление работы задачи">Возобн.</TextBlock>
+						<TextBlock Grid.Column="12" Style="{StaticResource HeaderStyle}" ToolTip="Состояние задачи в текущий момент времени">Состояние</TextBlock>
+						<TextBlock Grid.Column="13" Style="{StaticResource HeaderStyle}" ToolTip="Режим задачи в текущий момент времени">Режим</TextBlock>
+
+						<TextBlock Grid.Row="1" Grid.Column="0" VerticalAlignment="Center" Margin="3,0">Временная 1</TextBlock>
+						<TextBlock Grid.Row="2" Grid.Column="0" VerticalAlignment="Center" Margin="3,0">Временная 2</TextBlock>
+						<TextBlock Grid.Row="3" Grid.Column="0" VerticalAlignment="Center" Margin="3,0">Прерывание</TextBlock>
+
+						<Rectangle Grid.Row="1" Grid.Column="1" HorizontalAlignment="Center" Height="18" Width="18" Fill="#F04B64FF" Margin="1" />
+						<Rectangle Grid.Row="2" Grid.Column="1" HorizontalAlignment="Center" Height="18" Width="18" Fill="#F04BAF00" Margin="1" />
+						<Rectangle Grid.Row="3" Grid.Column="1" HorizontalAlignment="Center" Height="18" Width="18" Fill="#F0C86400" Margin="1" />
+
+						<TextBlock Grid.Row="1" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="3,0">Обмен</TextBlock>
+						<TextBlock Grid.Row="2" Grid.Column="2" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="3,0">Обработка</TextBlock>
+						
+						<Grid Grid.Row="1" Grid.Column="3" Margin="1" HorizontalAlignment="Center" ToolTip="Установка параметра по нажатию клавиши на клавиатуре">
+							<StackPanel Orientation="Horizontal" Name="taskTime1TnImages">
+								<Image Stretch="None" Source="/ASTM;component/Images/Keyboard.png" />
+								<TextBlock Margin="3.1,0" VerticalAlignment="Center">F2</TextBlock>
+							</StackPanel>
+							<TextBlock VerticalAlignment="Center" Name="taskTime1TnTextBlock" Visibility="Collapsed" Tag="Тн (временная задача 1)" />
+						</Grid>
+						<Grid Grid.Row="2" Grid.Column="3" Margin="1" HorizontalAlignment="Center" ToolTip="Установка параметра по нажатию правой кнопки мыши">
+							<StackPanel Orientation="Horizontal" Name="taskTime2TnImages">
+								<Image Stretch="None" Source="/ASTM;component/Images/MouseRight.png" />
+								<TextBlock Margin="1,0" VerticalAlignment="Center">ПКМ</TextBlock>
+							</StackPanel>
+							<TextBlock VerticalAlignment="Center" Name="taskTime2TnTextBlock" Visibility="Collapsed" Tag="Тн (временная задача 2)" />
+						</Grid>
+						<StackPanel Grid.Row="3" Grid.Column="3" Margin="1" Orientation="Horizontal" HorizontalAlignment="Center" ToolTip="Установка параметра по нажатию клавиши на клавиатуре">
+							<Image Stretch="None" Source="/ASTM;component/Images/Keyboard.png" />
+							<TextBlock Margin="3.1,0" VerticalAlignment="Center">F4</TextBlock>
+						</StackPanel>
+
+						<TextBox Grid.Row="1" Grid.Column="4" Style="{StaticResource TextBoxStyle}" LostFocus="ParamsTextBoxes_LostFocus" GotFocus="ParamsTextBoxes_GotFocus" Tag="Тп (временная задача 1)" Name="taskTime1TpTextBox" Text="7" />
+						<TextBox Grid.Row="2" Grid.Column="4" Style="{StaticResource TextBoxStyle}" LostFocus="ParamsTextBoxes_LostFocus" GotFocus="ParamsTextBoxes_GotFocus" Tag="Тп (временная задача 2)" Name="taskTime2TpTextBox" Text="8" />
+
+						<TextBox Grid.Row="1" Grid.Column="5" Style="{StaticResource TextBoxStyle}" LostFocus="ParamsTextBoxes_LostFocus" GotFocus="ParamsTextBoxes_GotFocus" Tag="Тз (временная задача 1)" Name="taskTime1TzTextBox" Text="5" />
+						<TextBox Grid.Row="2" Grid.Column="5" Style="{StaticResource TextBoxStyle}" LostFocus="ParamsTextBoxes_LostFocus" GotFocus="ParamsTextBoxes_GotFocus" Tag="Тз (временная задача 2)" Name="taskTime2TzTextBox" Text="6" />
+
+						<TextBox Grid.Row="1" Grid.Column="6" Style="{StaticResource TextBoxStyle}" LostFocus="ParamsTextBoxes_LostFocus" GotFocus="ParamsTextBoxes_GotFocus" Tag="Ткр (временная задача 1)" Name="taskTime1TkrTextBox" Text="6" />
+						<TextBox Grid.Row="2" Grid.Column="6" Style="{StaticResource TextBoxStyle}" LostFocus="ParamsTextBoxes_LostFocus" GotFocus="ParamsTextBoxes_GotFocus" Tag="Ткр (временная задача 2)" Name="taskTime2TkrTextBox" Text="7" />
+						<TextBox Grid.Row="3" Grid.Column="6" Style="{StaticResource TextBoxStyle}" LostFocus="ParamsTextBoxes_LostFocus" GotFocus="ParamsTextBoxes_GotFocus" Tag="Ткр (прерывание)" Name="taskIntTkrTextBox" Text="5" />
+
+						<TextBox Grid.Row="1" Grid.Column="7" Style="{StaticResource TextBoxStyle}" LostFocus="ParamsTextBoxes_LostFocus" GotFocus="ParamsTextBoxes_GotFocus" Tag="Пр (временная задача 1)" Name="taskTime1PrTextBox" Text="0" />
+						<TextBox Grid.Row="2" Grid.Column="7" Style="{StaticResource TextBoxStyle}" LostFocus="ParamsTextBoxes_LostFocus" GotFocus="ParamsTextBoxes_GotFocus" Tag="Пр (временная задача 2)" Name="taskTime2PrTextBox" Text="1" />
+						<TextBox Grid.Row="1" Grid.Column="8" Style="{StaticResource TextBoxStyle}" LostFocus="ParamsTextBoxes_LostFocus" GotFocus="ParamsTextBoxes_GotFocus" Tag="Тс (временная задача 1)" Name="taskTime1TsTextBox" Text="4" />
+						<Border Grid.Row="2" Grid.Column="8" Margin="1" BorderThickness="2" CornerRadius="1" BorderBrush="YellowGreen">
+							<TextBox Style="{StaticResource TextBoxStyle}" Margin="0" LostFocus="ParamsTextBoxes_LostFocus" GotFocus="ParamsTextBoxes_GotFocus" Tag="Тс (временная задача 2)" Name="taskTime2TsTextBox" Text="5" FontWeight="Bold" Foreground="#FF005BFF" />
+						</Border>
+						<TextBox Grid.Row="3" Grid.Column="8" Style="{StaticResource TextBoxStyle}" LostFocus="ParamsTextBoxes_LostFocus" GotFocus="ParamsTextBoxes_GotFocus" Tag="Тс (прерывание)" Name="taskIntTsTextBox" Text="3" />
+
+						<StackPanel Grid.Row="1" Grid.Column="9" Orientation="Horizontal" HorizontalAlignment="Center" ToolTip="Частота установки параметра Тк текущей задачи по событию указанной">
+							<Image Margin="1" Height="16" Width="16" Stretch="Uniform" Source="/ASTM;component/Images/Event.png" />
+							<TextBlock Margin="1" VerticalAlignment="Center">2:</TextBlock>
+							<TextBox Style="{StaticResource TextBoxStyle}" LostFocus="ParamsTextBoxes_LostFocus" GotFocus="ParamsTextBoxes_GotFocus" Tag="Частота установки Тк временной задачи 1 (возникновения события временной задачи 2 по установке параметра Тк временной задачи 1)" Name="taskTime1TkTextBox" Text="5" />
+						</StackPanel>
+						<TextBox Grid.Row="2" Grid.Column="9" Style="{StaticResource TextBoxStyle}" LostFocus="ParamsTextBoxes_LostFocus" GotFocus="ParamsTextBoxes_GotFocus" Name="taskTime2TkTextBox" Tag="Тк (время жизни временной задачи 2 на протяжении моделирования)" Text="60" />
+
+						<StackPanel Grid.Row="1" Grid.Column="10" Orientation="Horizontal" HorizontalAlignment="Center" ToolTip="Частота приостановки работы текущей задачи по событию указанной">
+							<Image Margin="1" Height="16" Width="16" Stretch="Uniform" Source="/ASTM;component/Images/Event.png" />
+							<TextBlock Margin="1" VerticalAlignment="Center">2:</TextBlock>
+							<TextBox Style="{StaticResource TextBoxStyle}" LostFocus="ParamsTextBoxes_LostFocus" GotFocus="ParamsTextBoxes_GotFocus" Tag="Частота приостановки временной задачи 1 (возникновения события временной задачи 2 для задания времени приостановки временной задачи 1)" Name="taskTime1PauseTextBox" Text="3" />
+						</StackPanel>
+
+						<StackPanel Grid.Row="1" Grid.Column="11" Margin="1" Orientation="Horizontal" HorizontalAlignment="Center" ToolTip="Установка параметра по нажатию левой кнопки мыши">
+							<Image Stretch="None" Source="/ASTM;component/Images/MouseLeft.png" />
+							<TextBlock Margin="1.5,0" VerticalAlignment="Center">ЛКМ</TextBlock>
+						</StackPanel>
+
+						<TextBlock Grid.Row="1" Grid.Column="12" VerticalAlignment="Center" TextAlignment="Center" Margin="3,0" Name="taskTime1StateTextBlock">Неактивна</TextBlock>
+						<TextBlock Grid.Row="2" Grid.Column="12" VerticalAlignment="Center" TextAlignment="Center" Margin="3,0" Name="taskTime2StateTextBlock">Неактивна</TextBlock>
+						<TextBlock Grid.Row="3" Grid.Column="12" VerticalAlignment="Center" TextAlignment="Center" Margin="3,0" Name="taskIntStateTextBlock">-</TextBlock>
+
+						<TextBlock Grid.Row="1" Grid.Column="13" VerticalAlignment="Center" TextAlignment="Center" Margin="3,0" Name="taskTime1ModeTextBlock">Отключена</TextBlock>
+						<TextBlock Grid.Row="2" Grid.Column="13" VerticalAlignment="Center" TextAlignment="Center" Margin="3,0" Name="taskTime2ModeTextBlock">Отключена</TextBlock>
+						<TextBlock Grid.Row="3" Grid.Column="13" VerticalAlignment="Center" TextAlignment="Center" Margin="3,0" Name="taskIntModeTextBlock">-</TextBlock>
+					</Grid>
+				</ScrollViewer>
+			</Border>
+			<StackPanel Grid.Row="2" Margin="0,15,0,3" Orientation="Horizontal">
+				<Image VerticalAlignment="Center" Stretch="None" Source="/ASTM;component/Images/Diagram.png" />
+				<TextBlock Margin="3,0" FontSize="16">Временная диаграмма активности задач:</TextBlock>
+			</StackPanel>
+			<Border Grid.Row="3" BorderBrush="#FF828790" BorderThickness="1">
+				<Grid>
+					<Grid.RowDefinitions>
+						<RowDefinition Height="*" />
+						<RowDefinition Height="Auto" />
+					</Grid.RowDefinitions>
+					<ScrollViewer Name="scrollArea" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" PreviewMouseRightButtonDown="scrollArea_PreviewMouseRightButtonDown" PreviewMouseLeftButtonDown="scrollArea_PreviewMouseLeftButtonDown">
+						<Grid Margin="10.5,10" Name="graph" />
+					</ScrollViewer>
+					<StackPanel Visibility="Collapsed" HorizontalAlignment="Left" Orientation="Horizontal" Name="requestPanel1" VerticalAlignment="Top">
+						<Button Margin="1.5" Padding="2" ToolTip="Пропустить плановый запуск" Click="skipTask1Request_Click">
+							<StackPanel Orientation="Horizontal">
+								<Image Stretch="Uniform" Height="16" Source="/ASTM;component/Images/Skip.png" />
+							</StackPanel>
+						</Button>
+						<Button Margin="1.5" Padding="2" ToolTip="Снять задачу" Click="shutdownTask1Request_Click">
+							<StackPanel Orientation="Horizontal">
+								<Image Stretch="Uniform" Height="16" Source="/ASTM;component/Images/Shutdown.png" />
+							</StackPanel>
+						</Button>
+					</StackPanel>
+					<StackPanel Visibility="Collapsed" HorizontalAlignment="Left" Orientation="Horizontal" Name="requestPanel2" VerticalAlignment="Top">
+						<Button Margin="1.5" Padding="2" ToolTip="Пропустить плановый запуск" Click="skipTask2Request_Click">
+							<StackPanel Orientation="Horizontal">
+								<Image Stretch="Uniform" Height="16" Source="/ASTM;component/Images/Skip.png" />
+							</StackPanel>
+						</Button>
+						<Button Margin="1.5" Padding="2" ToolTip="Снять задачу" Click="shutdownTask2Request_Click">
+							<StackPanel Orientation="Horizontal">
+								<Image Stretch="Uniform" Height="16" Source="/ASTM;component/Images/Shutdown.png" />
+							</StackPanel>
+						</Button>
+					</StackPanel>
+					<WrapPanel Grid.Row="1" Margin="5,8">
+						<StackPanel Margin="5,2" Orientation="Horizontal" ToolTip="Время первого запуска задачи Тн (Начала ее работы в системе)">
+							<Image Stretch="None" Source="/ASTM;component/Images/StartTime.png" />
+							<TextBlock VerticalAlignment="Center" Margin="4,0" Text="Время запуска" />
+						</StackPanel>
+						<StackPanel Margin="5,2" Orientation="Horizontal" ToolTip="Время жизни задачи Тк на протяжении всего моделирования (время прекращения ее работы в системе)">
+							<Image Stretch="None" Source="/ASTM;component/Images/StopTime.png" />
+							<TextBlock VerticalAlignment="Center" Margin="4,0" Text="Время останова" />
+						</StackPanel>
+						<StackPanel Margin="5,2" Orientation="Horizontal" ToolTip="Плановое время получения задачей управления">
+							<Image Stretch="None" Source="/ASTM;component/Images/PlannedTime.png" />
+							<TextBlock VerticalAlignment="Center" Margin="4,0" Text="Плановое время" />
+						</StackPanel>
+						<StackPanel Margin="5,2" Orientation="Horizontal" ToolTip="Сгенерированное задачей событие">
+							<Image Stretch="Uniform" Height="16" Width="16" Source="/ASTM;component/Images/Event.png" />
+							<TextBlock VerticalAlignment="Center" Margin="4,0" Text="Событие" />
+						</StackPanel>
+						<StackPanel Margin="5,2" Orientation="Horizontal" ToolTip="Останов текущего сеанса работы задачи из-за превышения ею критического времени работы задачи Ткр">
+							<Image Stretch="None" Source="/ASTM;component/Images/Break.png" />
+							<TextBlock VerticalAlignment="Center" Margin="4,0" Text="Останов сеанса" />
+						</StackPanel>
+						<StackPanel Margin="5,2" Orientation="Horizontal" ToolTip="Приостановка задачи (&quot;сон&quot;); менеджер не будет рассматривать данную задачу до тех пор, пока она не будет возобновлена">
+							<Image Stretch="None" Source="/ASTM;component/Images/PauseTask.png" />
+							<TextBlock VerticalAlignment="Center" Margin="4,0" Text="Приостановка" />
+						</StackPanel>
+						<StackPanel Margin="5,2" Orientation="Horizontal" ToolTip="Возобновление работы задачи после ее приостановки">
+							<Image Stretch="None" Source="/ASTM;component/Images/ResumeTask.png" />
+							<TextBlock VerticalAlignment="Center" Margin="4,0" Text="Возобновление" />
+						</StackPanel>
+						<StackPanel Margin="5,2" Orientation="Horizontal" ToolTip="Приостановка сеанса работы задачи возникшим прерыванием">
+							<Image Margin="0.3,0,0,0" Stretch="Uniform" Height="16" Source="/ASTM;component/Images/Interrupt.png" />
+							<TextBlock VerticalAlignment="Center" Margin="4,0" Text="Прерывание" />
+						</StackPanel>
+						<StackPanel Margin="5,2" Orientation="Horizontal" ToolTip="Возобновление сеанса работы задачи, приостановленной возникшим прерыванием">
+							<Image Stretch="Uniform" Height="16" Source="/ASTM;component/Images/Continue.png" />
+							<TextBlock VerticalAlignment="Center" Margin="4,0" Text="Продолжение" />
+						</StackPanel>
+						<StackPanel Margin="5,2" Orientation="Horizontal" ToolTip="Запрос пользователю о дальнейших действиях, который возникает в результате превышения задачей максимального времени ожидания получений управления (Тз)">
+							<Image Stretch="Uniform" Height="16" Source="/ASTM;component/Images/Request.png" />
+							<TextBlock VerticalAlignment="Center" Margin="4,0" Text="Запрос" />
+						</StackPanel>
+						<StackPanel Margin="5,2" Orientation="Horizontal" ToolTip="Ответ за запрос пользователю: пропустить текущее плановое время">
+							<Image Stretch="Uniform" Height="16" Source="/ASTM;component/Images/Skip.png" />
+							<TextBlock VerticalAlignment="Center" Margin="4,0" Text="Пропуск" />
+						</StackPanel>
+						<StackPanel Margin="5,2" Orientation="Horizontal" ToolTip="Ответ за запрос пользователю: снять текущую задачу с выполнения и полностью отключить ее, убрав из списка рассматриваемых менеджером">
+							<Image Stretch="Uniform" Height="16" Source="/ASTM;component/Images/Shutdown.png" />
+							<TextBlock VerticalAlignment="Center" Margin="4,0" Text="Снятие" />
+						</StackPanel>
+						<StackPanel Margin="5,2" Orientation="Horizontal" ToolTip="Момент времени, в который задача с функцией обмена произвела операцию">
+							<Image Stretch="Uniform" Height="16" Source="/ASTM;component/Images/ReadPoint.png" />
+							<TextBlock VerticalAlignment="Center" Margin="4,0" Text="Обмен данными" />
+						</StackPanel>
+						<StackPanel Margin="5,2" Orientation="Horizontal" ToolTip="Момент времени, в который задача с функцией обработки данных произвела операцию">
+							<Image Stretch="Uniform" Height="16" Source="/ASTM;component/Images/RedDot.png" />
+							<TextBlock VerticalAlignment="Center" Margin="4,0" Text="Обработка данных" />
+						</StackPanel>
+					</WrapPanel>
+				</Grid>
+			</Border>
+			<Grid Grid.Row="4">
+				<Grid.ColumnDefinitions>
+					<ColumnDefinition Width="Auto" />
+					<ColumnDefinition Width="*" />
+					<ColumnDefinition Width="Auto" />
+				</Grid.ColumnDefinitions>
+				<CheckBox Margin="0,3,3,0" VerticalAlignment="Center" IsChecked="{Binding ElementName=autoScrollMenuItem, Path=IsChecked}">Автопрокрутка</CheckBox>
+				<StackPanel Grid.Column="2" Orientation="Horizontal" Margin="0,3,0,0">
+					<Image VerticalAlignment="Center" Stretch="None" Source="/ASTM;component/Images/Time.png" />
+					<TextBlock Margin="3,0" VerticalAlignment="Center" ToolTip="Текущее реальное время">Реальное время:</TextBlock>
+					<TextBlock Margin="0,0,3,0" VerticalAlignment="Center" ToolTip="Текущее реальное время" Name="realTimeBox">00:00:00</TextBlock>
+					<TextBlock VerticalAlignment="Center">(</TextBlock>
+					<TextBlock VerticalAlignment="Center" Foreground="ForestGreen" ToolTip="Реальное время начала моделирования" Name="startTimeTextBox">00:00:00</TextBlock>
+					<TextBlock Margin="3,0" VerticalAlignment="Center">-</TextBlock>
+					<TextBlock VerticalAlignment="Center" Foreground="Firebrick" ToolTip="Реальное время окончания моделирования" Name="endTimeTextBox">00:00:00</TextBlock>
+					<TextBlock VerticalAlignment="Center">)</TextBlock>
+					<Image Margin="15,0,0,0" VerticalAlignment="Center" Stretch="None" Source="/ASTM;component/Images/Time.png" />
+					<TextBlock Margin="3,0" VerticalAlignment="Center" ToolTip="Текущее модельное время">Системное время:</TextBlock>
+					<TextBlock VerticalAlignment="Center" Foreground="RoyalBlue" ToolTip="Текущее модельное время" Name="systemTimeTextBox" Text="{Binding Path=CurrentTime}" />
+				</StackPanel>
+			</Grid>
+		</Grid>
+		<StatusBar Grid.Row="3" Height="23">
+			<TextBlock Margin="3,0" Name="statusBarText">Готов к работе</TextBlock>
+		</StatusBar>
+	</Grid>
+</Window>

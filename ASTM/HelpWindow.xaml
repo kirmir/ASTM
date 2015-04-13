@@ -1,0 +1,191 @@
+﻿<Window x:Class="ASTM.HelpWindow"
+		xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		Title="Техническое задание" Icon="/ASTM;component/Images/MainIcon.ico" ResizeMode="NoResize" ShowInTaskbar="False" SizeToContent="WidthAndHeight" WindowStartupLocation="CenterOwner" Loaded="Window_Loaded">
+	<Grid>
+		<Grid.RowDefinitions>
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+			<RowDefinition Height="Auto" />
+		</Grid.RowDefinitions>
+		<Grid.ColumnDefinitions>
+			<ColumnDefinition Width="Auto" />
+			<ColumnDefinition Width="*" />
+		</Grid.ColumnDefinitions>
+		<Image Margin="10" VerticalAlignment="Top" Source="/ASTM;component/Images/HelpDetails.png" />
+		<TextBlock Grid.Column="1" VerticalAlignment="Center" Padding="10" FontSize="16" Foreground="#FF003399">Расширенное техническое задание.</TextBlock>
+		<RichTextBox Grid.Row="1" Grid.ColumnSpan="2" Margin="10,0,10,10" IsReadOnly="True" Width="600" Height="360" VerticalScrollBarVisibility="Auto">
+			<FlowDocument>
+				<Paragraph>
+					<Run Text="       Донецкий национальный технический университет. Курсовой проект по курсу «Теория проектирования интерфейсов пользователя систем реального времени» студента группы СП-10м Мирошниченко К.В." />
+				</Paragraph>
+				<Paragraph>
+					<Run Text="       Согласно индивидуальному заданию поддерживаются " />
+					<Run Foreground="Blue" Text="2 временные задачи" />
+					<Run Text="и" />
+					<Run Foreground="Blue" Text="1 прерывание" />
+					<Run Text=". Временные задачи имеют следующие параметры:" />
+				</Paragraph>
+				<List>
+					<ListItem>
+						<Paragraph>
+							<Run Foreground="Blue" Text="Тн" />
+							<Run Text=" – время первого запуска." />
+						</Paragraph>
+					</ListItem>
+					<ListItem>
+						<Paragraph>
+							<Run Foreground="Blue" Text="Тп" />
+							<Run Text=" – период получения управления задачей; величина, которая позволяет вычислить очередное плановое время вызова задачи." />
+						</Paragraph>
+					</ListItem>
+					<ListItem>
+						<Paragraph>
+							<Run Foreground="Blue" Text="Тз" />
+							<Run Text=" – величина (время) допустимой задержки." />
+						</Paragraph>
+					</ListItem>
+					<ListItem>
+						<Paragraph>
+							<Run Foreground="Blue" Text="Ткр" />
+							<Run Text=" – максимально допустимое время работы задачи." />
+						</Paragraph>
+					</ListItem>
+					<ListItem>
+						<Paragraph>
+							<Run Foreground="Blue" Text="Пр" />
+							<Run Text=" – приоритет задачи." />
+						</Paragraph>
+					</ListItem>
+					<ListItem>
+						<Paragraph>
+							<Run Foreground="Blue" Text="Тс" />
+							<Run Text=" – время сеанса, то есть время, на протяжении которого задача выполняет свои функции." />
+						</Paragraph>
+					</ListItem>
+					<ListItem>
+						<Paragraph>
+							<Run Foreground="Blue" Text="Тк" />
+							<Run Text=" – время жизни задачи на протяжении моделирования." />
+						</Paragraph>
+					</ListItem>
+				</List>
+				<Paragraph>
+					<Run Text="       Прерывания имеют только параметры " />
+					<Run Foreground="Blue" Text="Ткр" />
+					<Run Text=", " />
+					<Run Foreground="Blue" Text="Тс" />
+					<Run Text=" и " />
+					<Run Foreground="Blue" Text="Пр" />
+					<Run Text=". При этом их приоритет всегда выше любого приоритета временной задачи." />
+				</Paragraph>
+				<Paragraph>
+					<Run Text="       Все параметры задаются пользователем численным образом за исключением:" />
+				</Paragraph>
+				<List>
+					<ListItem>
+						<Paragraph>
+							<Run Foreground="Blue" Text="Тн для временной задачи 1" />
+							<Run Text=" задается по нажатию " />
+							<Run Foreground="Blue" Text="клавиши клавиатуры" />
+							<Run Text=", " />
+							<Run Foreground="Blue" Text="для временной задачи 2" />
+							<Run Text=" – " />
+							<Run Foreground="Blue" Text="правой кнопки мыши." />
+						</Paragraph>
+					</ListItem>
+					<ListItem>
+						<Paragraph>
+							<Run Foreground="Blue" Text="Снятие временной задачи 1 (Тк)" />
+							<Run Text=" происходит " />
+							<Run Foreground="Blue" Text="по событию временной задачи 2." />
+						</Paragraph>
+					</ListItem>
+					<ListItem>
+						<Paragraph>
+							<Run Foreground="Blue" Text="Тс временной задачи 2" />
+							<Run Text=" изменяется " />
+							<Run Foreground="Blue" Text="динамически" />
+							<Run Text=" в процессе моделирования (увеличивается на 1 секунду при каждом следующем запуске). В случае превышения допустимого времени Ткр сеанс работы задачи прерывается и следующий запуск производится с исходным значением Тс." />
+						</Paragraph>
+					</ListItem>
+				</List>
+				<Paragraph>
+					<Run Foreground="Blue" Text="       Редактирование параметров" />
+					<Run Text=" задач по время моделирования " />
+					<Run Foreground="Blue" Text="не предусмотрено." />
+				</Paragraph>
+				<Paragraph>
+					<Run Foreground="Blue" Text="       Запуск прерывания" />
+					<Run Text=" происходит по нажатию " />
+					<Run Foreground="Blue" Text="клавиши клавиатуры" />
+					<Run Text=". Также работа " />
+					<Run Foreground="Blue" Text="временной задачи 1" />
+					<Run Text=" может быть " />
+					<Run Foreground="Blue" Text="приостановлена по событию от задачи 2" />
+					<Run Text=" и " />
+					<Run Foreground="Blue" Text="возобновлена по нажатию левой кнопки мыши" />
+					<Run Text=". Момент возникновения событий во временных задачах устанавливается числовым образом перед моделированием." />
+				</Paragraph>
+				<Paragraph>
+					<Run Text="       При поступлении нескольких прерываний подряд они буферизируются и получают управление в порядке поступления. При этом менеджер обязан реагировать на их поступление " />
+					<Run Foreground="Blue" Text="немедленно." />
+				</Paragraph>
+				<Paragraph>
+					<Run Text="       Плановое время следующего запуска временной задачи рассчитывается от " />
+					<Run Foreground="Blue" Text="предыдущего" />
+					<Run Text=" ее планового времени, независимо от того, получила задача управление или нет. Задачи одного типа никогда не прерывают аналогичные работающие задачи, даже если имеют более высокий приоритет. Если задача не смогла получить управление в запланированное время, то она переходит в режим ожидания. Если время ожидания превышает допустимое (Тз), то поступает " />
+					<Run Foreground="Blue" Text="запрос: пропуск планового времени или снятие задачи." />
+					<Run Text=" Система не приостанавливает своей работы во время ожидания ответа на запрос." />
+				</Paragraph>
+				<Paragraph>
+					<Run Text="       Функция, описывающая сигнал: " />
+					<Run Foreground="Blue" Text="f(t) = arcctg(x/4)." />
+					<Run Text=" Тип сигнала: " />
+					<Run Foreground="Blue" Text="дискретный." />
+				</Paragraph>
+				<Paragraph>
+					<Run Text="       Задачи выполняют следующие функции:" />
+				</Paragraph>
+				<List>
+					<ListItem>
+						<Paragraph>
+							<Run Text="Временная задача 1 производит считывание данных путем вычисления функции в текущий момент системного времени и запись полученных значений в буфер." />
+						</Paragraph>
+					</ListItem>
+					<ListItem>
+						<Paragraph>
+							<Run Text="Временная задача 2 обрабатывает значения из буфера и выводит их на график функции." />
+						</Paragraph>
+					</ListItem>
+					<ListItem>
+						<Paragraph>
+							<Run Text="Каждая задача выполняет визуализацию своей работы на временной диаграмме." />
+						</Paragraph>
+					</ListItem>
+					<ListItem>
+						<Paragraph>
+							<Run Text="Временная задача 2 генерирует события, необходимые по условию для задачи 1." />
+						</Paragraph>
+					</ListItem>
+				</List>
+				<Paragraph>
+					<Run Text="       Общее время моделирования работы менеджера задач составляет " />
+					<Run Foreground="Blue" Text="65 секунд" />
+					<Run Text=", при этом заданная функция изменения сигнала должна пройти " />
+					<Run Foreground="Blue" Text="5 периодов" />
+					<Run Text=". Период обработки значений функции составляет " />
+					<Run Foreground="Blue" Text="1 секунду" />
+					<Run Text="." />
+				</Paragraph>
+			</FlowDocument>
+		</RichTextBox>
+		<Border Grid.Row="2" Grid.ColumnSpan="2" BorderThickness="1" BorderBrush="#FFDFDFDF" Background="#FFF0F0F0">
+			<StackPanel Margin="10" Orientation="Horizontal" HorizontalAlignment="Center">
+				<Button Height="23" Width="75" IsDefault="True" IsCancel="True" Name="okButton">_OK</Button>
+				<Button Margin="1,0" Padding="8,2" IsDefault="True" Name="startButton" Visibility="Collapsed" Click="startButton_Click">_Начать моделирование</Button>
+				<Button Margin="1,0" Padding="8,2" IsCancel="True" Click="exitButton_Click" Name="exitButton" Visibility="Collapsed">_Выход</Button>
+			</StackPanel>
+		</Border>
+	</Grid>
+</Window>
